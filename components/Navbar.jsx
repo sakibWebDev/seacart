@@ -1,12 +1,15 @@
 'use client'
-import { Search, ShoppingCart } from "lucide-react";
+import { PackageIcon, Search, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import { useUser, useClerk, UserButton } from "@clerk/nextjs";
 
 const Navbar = () => {
 
+    const {user} =useUser();
+    const { openSignIn } = useClerk();
     const router = useRouter();
 
     const [search, setSearch] = useState('')
@@ -47,17 +50,60 @@ const Navbar = () => {
                             <button className="absolute -top-1 left-3 text-[8px] text-white bg-slate-600 size-3.5 rounded-full">{cartCount}</button>
                         </Link>
 
-                        <button className="px-8 py-2 bg-indigo-500 hover:bg-indigo-600 transition text-white rounded-full">
-                            Login
-                        </button>
+                        {
+                            !user ? (
+                                    <button className="px-8 py-2 bg-indigo-500 hover:bg-indigo-600 transition text-white rounded-full"
+                                            onClick={openSignIn}
+                                                                                    >
+                                        Login
+                                    </button>
+                            ) : (
+                                <UserButton>
+                                    <UserButton.MenuItems>
+                                       <UserButton.Action
+                                                        label="My Orders"
+                                                        labelIcon={<PackageIcon size={16} />}
+                                                        onClick={() => router.push('/orders')}
+                                                        />
+                                    </UserButton.MenuItems>
+                                </UserButton>
+                            )
+                        }
 
                     </div>
 
                     {/* Mobile User Button  */}
                     <div className="sm:hidden">
-                        <button className="px-7 py-1.5 bg-indigo-500 hover:bg-indigo-600 text-sm transition text-white rounded-full">
+                    {
+                        user ? (
+                            <div>
+                                <UserButton>
+                                    <UserButton.MenuItems>
+                                       <UserButton.Action
+                                                        label="Cart"
+                                                        labelIcon={<ShoppingCart size={16} />}
+                                                        onClick={() => router.push('/cart')}
+                                                        />
+                                    </UserButton.MenuItems>
+                                </UserButton>
+                                <UserButton>
+                                    <UserButton.MenuItems>
+                                       <UserButton.Action
+                                                        label="My Orders"
+                                                        labelIcon={<PackageIcon size={16} />}
+                                                        onClick={() => router.push('/orders')}
+                                                        />
+                                    </UserButton.MenuItems>
+                                </UserButton>
+                            </div>
+                        ): (
+                             <button 
+                            onClick={openSignIn}
+                            className="px-7 py-1.5 bg-indigo-500 hover:bg-indigo-600 text-sm transition text-white rounded-full">
                             Login
                         </button>
+                        )
+                    }
                     </div>
                 </div>
             </div>
