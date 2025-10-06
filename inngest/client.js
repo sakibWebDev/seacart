@@ -1,5 +1,6 @@
-import { inngest } from "inngest";
+import { Inngest } from "inngest";
 
-export const inngestClient = inngest({
-  name: "nextcart-app", // descriptive name
+export const inngestClient = new Inngest({
+  id: "nextcart-app",
+  name: "NextCart App",
 });
